@@ -1,12 +1,17 @@
 name: Build artifacts for amd64 and arm64
 
 on:
-  push:
-    tags:
-      - '*'
+  # push:
+  #   tags:
+  #     - '*'
 
   # Allows you to run this workflow manually from the Actions tab
   workflow_dispatch:
+    inputs:
+      version:
+        description: 'Version'
+        required: true
+        default: '0.0.0'
 
 jobs:
   build-for-amd64:
@@ -46,7 +51,7 @@ jobs:
           
           flutter pub get
           make release_bundle -j16
-          make deb_package VERSION=${{ github.ref_name || github.sha }}
+          make deb_package VERSION=${{ github.event.inputs.version }}
 
       - name: Archive amd64 bundle
         uses: thedoctor0/zip-release@master
@@ -100,7 +105,7 @@ jobs:
             cp -R flutter/bin/cache/artifacts/engine/linux-x64/shader_lib flutter/bin/cache/artifacts/engine/linux-arm64
             
             flutter pub get
-            make deb_package -j16 VERSION=${{ github.ref_name || github.sha }}
+            make deb_package -j16 VERSION=${{ github.event.inputs.version }}
 
       - uses: actions/upload-artifact@v3
         with:
@@ -127,8 +132,8 @@ jobs:
         uses: "marvinpinto/action-automatic-releases@latest"
         with:
           repo_token: "${{ secrets.GITHUB_TOKEN }}"
-          automatic_release_tag: "${{ github.ref_name || github.sha }}"
-          title: "Zenith ${{ github.ref_name || github.sha }}"
+          automatic_release_tag: "${{ github.event.inputs.version }}"
+          title: "Zenith ${{ github.event.inputs.version }}"
           prerelease: false
           files: |
             *.zip
