@@ -46,7 +46,7 @@ jobs:
           
           flutter pub get
           make release_bundle -j16
-          make deb_package VERSION=${{ github.ref_name }}
+          make deb_package VERSION=${{ github.ref_name || github.sha }}
 
       - name: Archive amd64 bundle
         uses: thedoctor0/zip-release@master
@@ -100,7 +100,7 @@ jobs:
             cp -R flutter/bin/cache/artifacts/engine/linux-x64/shader_lib flutter/bin/cache/artifacts/engine/linux-arm64
             
             flutter pub get
-            make deb_package -j16 VERSION=${{ github.ref_name }}
+            make deb_package -j16 VERSION=${{ github.ref_name || github.sha }}
 
       - uses: actions/upload-artifact@v3
         with:
@@ -127,8 +127,8 @@ jobs:
         uses: "marvinpinto/action-automatic-releases@latest"
         with:
           repo_token: "${{ secrets.GITHUB_TOKEN }}"
-          automatic_release_tag: "${{ github.ref_name }}"
-          title: "Zenith ${{ github.ref_name }}"
+          automatic_release_tag: "${{ github.ref_name || github.sha }}"
+          title: "Zenith ${{ github.ref_name || github.sha }}"
           prerelease: false
           files: |
             *.zip
