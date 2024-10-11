@@ -29,8 +29,8 @@ class SingleLogicalKeyReleaseActivator extends ShortcutActivator {
   SingleLogicalKeyReleaseActivator(this.key);
 
   @override
-  bool accepts(RawKeyEvent event, RawKeyboard state) {
-    if (event is! RawKeyUpEvent) {
+  bool accepts(KeyEvent event, HardwareKeyboard state) {
+    if (event is! KeyUpEvent) {
       return false;
     }
     return event.logicalKey == key;
@@ -70,14 +70,15 @@ class _DesktopUiState extends ConsumerState<DesktopUi> {
             ? {
                 const SingleActivator(LogicalKeyboardKey.tab, alt: true, includeRepeats: false):
                     const ShowTaskSwitcher(true),
-                const SingleActivator(LogicalKeyboardKey.tab, alt: true, shift: true, includeRepeats: false):
-                    const ShowTaskSwitcher(false),
+                const SingleActivator(LogicalKeyboardKey.tab,
+                    alt: true, shift: true, includeRepeats: false): const ShowTaskSwitcher(false),
               }
             : {
                 SingleLogicalKeyReleaseActivator(LogicalKeyboardKey.altLeft): HideTaskSwitcher(),
-                const SingleActivator(LogicalKeyboardKey.tab, alt: true, includeRepeats: false): TaskSwitcherGoToNext(),
-                const SingleActivator(LogicalKeyboardKey.tab, alt: true, shift: true, includeRepeats: false):
-                    TaskSwitcherGoToPrevious(),
+                const SingleActivator(LogicalKeyboardKey.tab, alt: true, includeRepeats: false):
+                    TaskSwitcherGoToNext(),
+                const SingleActivator(LogicalKeyboardKey.tab,
+                    alt: true, shift: true, includeRepeats: false): TaskSwitcherGoToPrevious(),
               };
 
         return Shortcuts(
